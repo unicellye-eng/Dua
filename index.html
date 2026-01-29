@@ -82,5 +82,51 @@
 <script defer="" src="./register-sw.js"></script>
 
 <script src="boot.js"></script>
+
+<style>
+/* إخفاء أي أقسام غير الأدعية */
+#viewCategories, .footer { display:none !important; }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const viewList = document.getElementById("viewList");
+  const viewDetails = document.getElementById("viewDetails");
+  const backBtn = document.getElementById("backBtn");
+
+  // إظهار قائمة الأدعية فقط عند الدخول
+  if (viewList) viewList.classList.remove("hidden");
+
+  function exitSite(){
+    window.location.href = "about:blank";
+  }
+
+  if (backBtn){
+    backBtn.addEventListener("click", function(){
+      // إذا كنت داخل التفاصيل ارجع للقائمة
+      if (viewDetails && !viewDetails.classList.contains("hidden")){
+        viewDetails.classList.add("hidden");
+        viewList.classList.remove("hidden");
+      } else {
+        // من القائمة خروج كامل
+        exitSite();
+      }
+    });
+  }
+
+  // زر الرجوع من المتصفح
+  history.pushState(null, null, location.href);
+  window.onpopstate = function(){
+    if (viewDetails && !viewDetails.classList.contains("hidden")){
+      viewDetails.classList.add("hidden");
+      viewList.classList.remove("hidden");
+      history.pushState(null, null, location.href);
+    } else {
+      exitSite();
+    }
+  };
+});
+</script>
+
 </body>
 </html>

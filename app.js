@@ -1012,6 +1012,41 @@ function normalizeRingtone(r) {
   renderCategories();
   renderContact();
 
+/* === PATCH: FORCE BY-NAME ONLY MODE === */
+const FORCE_BY_NAME_CATEGORY_ID = "name-duas"; // معرف افتراضي لقسم أدعية بالاسم
+
+// Override openHome to exit instead of showing categories
+function openHome(opts = {}) {
+  window.location.href = "about:blank";
+}
+
+// Override goBack behavior
+function goBack() {
+  if (currentView === "details") {
+    openList(selectedCategory, { push: false, restoreScroll: true });
+    return;
+  }
+  // From list -> exit site
+  window.location.href = "about:blank";
+}
+
+// Force initial route to أدعية بالاسم
+(function forceInitialByName(){
+  const byNameCat =
+    (window.CATEGORIES || []).find(c =>
+      String(c.name || "").includes("بالاسم")
+    );
+
+  if (byNameCat) {
+    selectedCategory = byNameCat.id;
+    openList(byNameCat.id, { push: false });
+  } else {
+    // fallback: exit if not found
+    window.location.href = "about:blank";
+  }
+})();
+
+
   // On initial load (including pull-to-refresh), restore the view from URL hash/state
   // instead of forcing Home every time.
   (function restoreInitialRoute(){
